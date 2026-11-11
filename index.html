@@ -235,43 +235,12 @@ body{padding-bottom:76px}
 
   <!-- ============ 步骤4 ============ -->
   <div class="panel" id="p4">
-    <h2>技术标准和要求<span class="tip">第五章 · 项目概况自由撰写（支持插图）+ 四张表结构化</span></h2>
-
-    <div class="grp"><h3>产品档位选择</h3>
-      <div class="grid">
-        <div class="f"><label>项目档位</label>
-          <select id="f_档位">
-            <option value="T">T 档（顶级）</option>
-            <option value="S" selected>S 档（高端）</option>
-            <option value="W">W 档（改善）</option>
-            <option value="J">J 档（刚需）</option>
-          </select></div>
-        <div class="f"><label>产品系</label><input id="f_产品系" placeholder="月华系"></div>
-      </div>
-      <div class="hint" style="margin-top:8px">选定档位后，下方"设计限额指标表"会自动填充该档位的标准值（可逐项微调）</div>
-    </div>
-
-    <div class="grp"><h3>设计限额指标表（表8）</h3>
-      <div class="tbl-wrap"><table class="ed" id="tbl8"></table></div>
-    </div>
-
-    <div class="grp"><h3>设计提资输入表（表6）<span class="tag info" style="margin-left:8px">617 格 · 分块编辑</span></h3>
-      <div id="tbl6"></div>
-    </div>
-
-    <div class="grp"><h3>营销故事线（表7）</h3>
-      <div class="tbl-wrap"><table class="ed" id="tbl7"></table></div>
-    </div>
-
-    <div class="grp"><h3>产品标准条款库（表9）<span class="tag ok" style="margin-left:8px">284 条 · 全档通用，自动输出</span></h3>
-      <div class="hint" style="margin-bottom:8px">该表为绿城产品标准条款，四档通用，生成时自动全量写入，无需编辑</div>
-      <div id="tbl9"></div>
-    </div>
+    <h2>技术标准和要求<span class="tip">第五章 · 项目概况及规划条件自由撰写（支持插图）</span></h2>
 
     <div class="grp"><h3>项目概况及规划条件（自由撰写）<span class="tag info" style="margin-left:8px">1 节 · 可任意改写 · 支持插图</span></h3>
       <div class="hint" style="margin-bottom:10px;line-height:1.8">
         第五章只保留这一节由编制方撰写：基地概况、四至、外部环境、规划条件、用地指标、配套设施要求，已按模板原文预填，可直接改写、删段、加段，也可粘贴或拖入现状照片、分析图。<br>
-        其余内容（设计原则、客研/营销产品建议书、设计限额、性能底盘、方案设计深度、附件）按模板原文输出；表6/7/8/9 四张表格保持结构化，生成时自动排在对应位置。
+        其余内容不再提供编辑，生成时按模板原文原样输出：产品档位、设计提资表（表6）、营销故事线（表7）、设计限额指标表（表8）、产品标准条款库（表9）、设计原则、客研/营销产品建议书、性能底盘、方案设计深度及成果要求、附件。表格结构保持不变。
       </div>
       <div class="ch5list" id="ch5list"></div>
       <div class="ch5foot">
@@ -6879,7 +6848,8 @@ function initFields(){
   const rawTier = String(DATA['t6_r3_c1']||'S').trim();
   const segTier = rawTier.indexOf('/')>=0 ? rawTier.split('/').pop().trim() : rawTier;
   const t = /T/i.test(segTier)?'T':/S/i.test(segTier)?'S':/W/i.test(segTier)?'W':/J/i.test(segTier)?'J':'S';
-  document.getElementById('f_档位').value=t;
+  const selTier=document.getElementById('f_档位');
+  if(selTier) selTier.value=t;
   setVal('f_产品系', DATA['t6_r3_c3']||'');
   // 补齐表8 四档列（c2=T c3=S c4=W c5=J），保持原模板 5 列结构，未选档位列为空
   for(let r=1;r<=7;r++) for(let c=2;c<=5;c++){
@@ -6981,7 +6951,8 @@ function renderTable(n, elId, opts={}){
     html+='</tr>';
   }
   html+='</tbody></table>';
-  document.getElementById(elId).innerHTML=html;
+  const box=document.getElementById(elId);
+  if(box) box.innerHTML=html;
 }
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function onCell(el){
@@ -7004,7 +6975,8 @@ function renderT6(){
     html+=buildSubTable(6, sub);
     html+='</div></details>';
   });
-  document.getElementById('tbl6').innerHTML=html;
+  const b6=document.getElementById('tbl6');
+  if(b6) b6.innerHTML=html;
 }
 function buildSubTable(n, keys){
   const rows={};
@@ -7038,7 +7010,8 @@ function renderT9(){
   let h='<details class="blk"><summary>标准条款库 r0–r62<span class="cnt">'+keys.length+' 格 · 只读预览</span></summary><div class="blk-body">';
   h+=buildReadonly(9,keys);
   h+='</div></details>';
-  document.getElementById('tbl9').innerHTML=h;
+  const b9=document.getElementById('tbl9');
+  if(b9) b9.innerHTML=h;
 }
 function buildReadonly(n,keys){
   const rows={};
@@ -7106,8 +7079,8 @@ function buildSummary(){
     ['投标截止',DATA['投标截止']],
     ['容积率',DATA['容积率']],
     ['净地面积',DATA['净地总面积']+' ㎡'],
-    ['项目档位',document.getElementById('f_档位').value+' 档'],
-    ['产品系',val('f_产品系')]
+    ['项目档位',String(DATA['t6_r3_c1']||'').trim()],
+    ['产品系',String(DATA['t6_r3_c3']||'').trim()]
   ];
   document.getElementById('sumBox').innerHTML=items.map(([k,v])=>
     `<div class="item"><div class="k">${k}</div><div class="v">${esc(v||'—')}</div></div>`).join('');
@@ -7694,7 +7667,6 @@ function importJSON(inp){
       saveLocal();
       initFields(); initOpts();
       renderTable(3,'tbl3'); renderTable(4,'tbl4'); renderTable(5,'tbl5');
-      renderTable(8,'tbl8'); renderT6(); renderTable(7,'tbl7'); renderT9();
       CH5.forEach(b=>{ if(DATA['ch5_'+b.key]===undefined) DATA['ch5_'+b.key]=b.html; });
       initProjInfo();
       ch5Render();
@@ -7713,20 +7685,8 @@ function importJSON(inp){
   renderTable(3,'tbl3');
   renderTable(4,'tbl4');
   renderTable(5,'tbl5');
-  renderTable(8,'tbl8');
-  renderT6();
-  renderTable(7,'tbl7');
-  renderT9();
   initProjInfo();
   ch5Render();
-  document.getElementById('f_档位').addEventListener('change',function(){
-    applyTier(this.value);
-    DATA['t6_r3_c1']=this.value+(this.value==='S'?'/s':'');
-    saveLocal();
-  });
-  document.getElementById('f_产品系').addEventListener('input',function(){
-    DATA['t6_r3_c3']=this.value; saveLocal();
-  });
   document.getElementById('footInfo').textContent=
     '模板占位符 '+Object.keys(DEFAULTS).length+' 个 · 已加载';
 })();
